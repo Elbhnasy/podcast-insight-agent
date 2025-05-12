@@ -137,6 +137,69 @@ The API provides the following endpoints:
 - `POST /api/v1/chat`: Submit a query about podcast content
 - `GET /api/v1/health`: Check API health status
 
+## 🔄 Scheduled Jobs
+
+The system can run automated tasks to regularly update podcast content:
+
+```bash
+# Run all scheduled jobs
+python scheduled_jobs.py
+
+# Run specific job types
+python scheduled_jobs.py --job discover  # Find new podcasts
+python scheduled_jobs.py --job sync      # Sync to vector DB
+python scheduled_jobs.py --job email     # Send email summary
+```
+
+You can set up these jobs with cron to run automatically:
+
+```bash
+# Example crontab entry to run every 6 hours
+0 */6 * * * /path/to/python /path/to/podcast-insight-agent/scheduled_jobs.py
+```
+
+## 🚢 Deployment Options
+
+### Run API Server
+
+For easy API deployment:
+
+```bash
+# Start the API server
+python run_api.py
+```
+
+### Production Deployment
+
+A Kubernetes configuration is provided in `deployment.yaml` for production deployment:
+
+```bash
+# Apply the Kubernetes configuration
+kubectl apply -f deployment.yaml
+```
+
+## 📊 Updated Project Structure
+
+```
+podcast-insight-agent/
+├── src/
+│   ├── agent/              # LLM-powered agent for podcast analysis
+│   ├── api/                # Flask API server
+│   ├── db/                 # Database schema and utilities
+│   ├── prompts/            # System prompts and templates
+│   ├── retriever/          # RAG implementation for Q&A
+│   ├── utils/              # Utility functions and tools
+│   ├── vectorstore/        # Vector database integration
+│   └── Dockerfile          # Docker configuration
+├── main.py                 # CLI entry point
+├── run_api.py              # API server runner
+├── scheduled_jobs.py       # Automated tasks runner
+├── deployment.yaml         # Kubernetes deployment config
+├── requirements.txt        # Project dependencies
+├── .env.example            # Environment variable template
+└── README.md               # Project documentation
+```
+
 ## 🤝 Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
