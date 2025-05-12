@@ -24,13 +24,17 @@ except ImportError:
 
 # Configure logging
 logging.basicConfig(
-    level=logging.INFO,
+    level=getattr(logging, os.getenv('LOG_LEVEL', 'INFO')),
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
 logger = logging.getLogger(__name__)
 
-# Default configuration
-DEFAULT_CONFIG = RunnableConfig(recursion_limit=15)
+# Default configuration with environment-based settings
+DEFAULT_RECURSION_LIMIT = int(os.getenv('LLM_RECURSION_LIMIT', '15'))
+DEFAULT_CONFIG = RunnableConfig(
+    recursion_limit=DEFAULT_RECURSION_LIMIT,
+    tags=["podcast-agent"]
+)
 
 def generate_insights(query: str, config: Optional[RunnableConfig] = None) -> Dict[str, Any]:
     """
@@ -96,13 +100,26 @@ def main():
     
     # Sync command
     sync_parser = subparsers.add_parser('sync', help='Sync podcasts to vector database')
-    sync_parser.add_argument('--limit', '-l', type=int, default=1,
+    sync_parser.add_argument('--limit', '-l', type=int, 
+                            default=int(os.getenv('SYNC_PODCAST_LIMIT', '1')),
                             help='Number of recent podcasts to sync (default: 1)')
+    
+    # Add email command
+    email_parser = subparsers.add_parser('email', help='Send email with latest podcast insights')
+    email_parser.add_argument('--recipient', '-r', type=str, 
+                            default=os.getenv('EMAIL_RECIPIENT'),
+                            help='Email recipient (default: from .env)')
     
     # Parse arguments
     args = parser.parse_args()
     
-    # Default to query if no command specified
+    # Verify critical environment variables are set
+    if not os.getenv('OPENAI_API_KEY'):
+        logger.error("OPENAI_API_KEY environment variable is not set")
+        print("Error: OPENAI_API_KEY is required. Please set it in your .env file.")
+        sys.exit(1)
+        
+    # Default to help if no command specified
     if not args.command:
         parser.print_help()
         sys.exit(1)
@@ -121,6 +138,16 @@ def main():
         elif args.command == 'sync':
             result = sync_to_vector_db(args.limit)
             print(f"Vector DB sync result: {result['message']}")
+            
+        elif args.command == 'email':
+            # This is a placeholder for the email functionality
+            # You would implement a function to generate and send an email
+            recipient = args.recipient
+            if not recipient:
+                logger.error("Email recipient not specified")
+                print("Error: Email recipient is required. Use --recipient or set EMAIL_RECIPIENT in .env")
+                sys.exit(1)
+            print(f"Email functionality would send to: {recipient}")
             
     except KeyboardInterrupt:
         logger.info("Operation cancelled by user")
