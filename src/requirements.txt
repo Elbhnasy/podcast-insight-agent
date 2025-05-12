@@ -1,19 +1,39 @@
+# API Services
 google-search-results==2.4.2
 serpapi==0.1.5
 together==1.4.0
-flask==3.1.0
 youtube_transcript_api==0.6.3
+
+# Web Framework
+flask==3.1.0
+flask-cors==4.0.0
+gunicorn==21.2.0
+werkzeug==3.0.2
+
+# Database
 pymongo[srv]==3.12
-python-dotenv==1.0.1
+pinecone==6.0.2
+
+# LangChain Ecosystem
 langchain==0.3.25
 langchain-core==0.3.58
 langchain-openai==0.3.16
 langgraph==0.4.1
 langchain-community==0.3.23
-markdown2==2.4.12
+langchain-pinecone==0.2.5
+
+# Google API
 google-auth-oauthlib==1.2.0
 google-auth-httplib2==0.2.0
 google-api-python-client==2.118.0
-gunicorn
-pinecone==6.0.2
-langchain-pinecone==0.2.5
+
+# Utilities
+python-dotenv==1.0.1
+markdown2==2.4.12
+pydantic==2.5.3
+requests==2.31.0
+urllib3==2.0.7
+
+# Development
+pytest==7.4.3
+black==23.11.0
