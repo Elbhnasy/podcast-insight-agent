@@ -1,0 +1,75 @@
+# Kubernetes Deployment Configuration for Podcast Insight Agent
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: podcast-insight-agent
+  labels:
+    app: podcast-insight-agent
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: podcast-insight-agent
+  template:
+    metadata:
+      labels:
+        app: podcast-insight-agent
+    spec:
+      containers:
+      - name: podcast-insight-api
+        image: your-registry/podcast-insight-agent:latest
+        ports:
+        - containerPort: 8000
+        resources:
+          limits:
+            cpu: "1"
+            memory: "1Gi"
+          requests:
+            cpu: "500m"
+            memory: "512Mi"
+        envFrom:
+        - secretRef:
+            name: podcast-agent-secrets
+        livenessProbe:
+          httpGet:
+            path: /api/v1/health
+            port: 8000
+          initialDelaySeconds: 30
+          periodSeconds: 30
+        readinessProbe:
+          httpGet:
+            path: /api/v1/health
+            port: 8000
+          initialDelaySeconds: 5
+          periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: podcast-insight-agent
+spec:
+  selector:
+    app: podcast-insight-agent
+  ports:
+  - port: 80
+    targetPort: 8000
+  type: ClusterIP
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: podcast-discovery-job
+spec:
+  schedule: "0 */6 * * *"  # Run every 6 hours
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: podcast-discovery
+            image: your-registry/podcast-insight-agent:latest
+            command: ["python", "scheduled_jobs.py", "--job", "discover"]
+            envFrom:
+            - secretRef:
+                name: podcast-agent-secrets
+          restartPolicy: OnFailure
