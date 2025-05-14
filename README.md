@@ -90,13 +90,18 @@ podcast-insight-agent/
 ├── src/
 │   ├── agent/              # LLM-powered agent for podcast analysis
 │   ├── api/                # Flask API server
+│   ├── db/                 # Database schema and utilities
 │   ├── prompts/            # System prompts and templates
 │   ├── retriever/          # RAG implementation for Q&A
 │   ├── utils/              # Utility functions and tools
 │   ├── vectorstore/        # Vector database integration
 │   └── Dockerfile          # Docker configuration
 ├── main.py                 # CLI entry point
+├── run_api.py              # API server runner
+├── scheduled_jobs.py       # Automated tasks runner
+├── deployment.yaml         # Kubernetes deployment config
 ├── requirements.txt        # Project dependencies
+├── .env.example            # Environment variable template
 └── README.md               # Project documentation
 ```
 
@@ -178,28 +183,6 @@ A Kubernetes configuration is provided in `deployment.yaml` for production deplo
 kubectl apply -f deployment.yaml
 ```
 
-## 📊 Updated Project Structure
-
-```
-podcast-insight-agent/
-├── src/
-│   ├── agent/              # LLM-powered agent for podcast analysis
-│   ├── api/                # Flask API server
-│   ├── db/                 # Database schema and utilities
-│   ├── prompts/            # System prompts and templates
-│   ├── retriever/          # RAG implementation for Q&A
-│   ├── utils/              # Utility functions and tools
-│   ├── vectorstore/        # Vector database integration
-│   └── Dockerfile          # Docker configuration
-├── main.py                 # CLI entry point
-├── run_api.py              # API server runner
-├── scheduled_jobs.py       # Automated tasks runner
-├── deployment.yaml         # Kubernetes deployment config
-├── requirements.txt        # Project dependencies
-├── .env.example            # Environment variable template
-└── README.md               # Project documentation
-```
-
 ## 🤝 Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
@@ -221,3 +204,5 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 - [OpenAI](https://openai.com/) - LLM and embedding models
 - [MongoDB](https://www.mongodb.com/) - Document database
 - [Flask](https://flask.palletsprojects.com/) - Web framework
+- [LangGraph](https://github.com/langchain-ai/langgraph) - LLM agent orchestration
+- [YouTube Transcript API](https://github.com/jdepoix/youtube-transcript-api) - Transcript extraction
